@@ -11,3 +11,5 @@ THE STATE OF THE ART
 /*請將單位元件包成function以便main直接呼叫*/
 
 /*注意delay的位置與part計量*/
+
+/*建議先畫出時序圖後再進行編程*/

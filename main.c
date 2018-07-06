@@ -7,12 +7,13 @@
 
 
 
-#define F_CPU 11059200UL
-#include "ASA_Lib.h"
+#define F_CPU 11059200UL//設定頻率為11059200
+#include "ASA_Lib.h"//引入標準函式庫
 #include <avr/interrupt.h>
 
 volatile uint32_t g_ticks = 0;
 
+/*設定DIO00的ID*/
 #define DIO00_ID1 (3)
 #define DIO00_ID2 (4)
 
@@ -41,6 +42,7 @@ volatile uint32_t g_ticks = 0;
 volatile uint8_t pwm_A[8] = {0, 0, 0, 0, 0, 0, 0, 0};
 volatile uint8_t pwm_B[8] = {0, 0, 0, 0, 0, 0, 0, 0};
 
+/*sin函數的查詢表*/
 const uint8_t sin_p[] = {
 	0 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,2 ,2 ,
 	2 ,2 ,2 ,2 ,2 ,3 ,3 ,3 ,3 ,3 ,
@@ -86,7 +88,11 @@ const uint8_t sin_p[] = {
 char ASA_ID = 2; //宣告模組位址變數
 char LSByte = 0; //宣告資料在驅動函式暫存器表上最小住址
 char check;      //宣告模組回傳錯誤代碼變數
-uint32_t part = 0;
+uint32_t part = 0;//全域
+
+/*tt為延遲多久後播放燈泡動畫(單位為tick)*/
+/*tick與毫秒的換算方式為10tick = 50ms*/
+/*請將單位物件包成function以便直接呼叫*/
 
 void FireWork_4(int tt){
 
@@ -161,6 +167,7 @@ void R(int tt){
 }
 
 
+/*從8種亮度(0~7)中選擇一個閥值*/
 void pwm_A_set(uint8_t bit, uint8_t selection) {
 	
 	pwm_A[bit] = selection;
@@ -171,7 +178,7 @@ void pwm_B_set(uint8_t bit, uint8_t selection) {
 	pwm_B[bit] = selection;
 }
 
-
+/*製造亮暗程度並傳至DIO*/
 inline void pwm_A_task()
 {
 	uint8_t PWM_counter = g_ticks % pwm_max_val;
@@ -206,7 +213,7 @@ inline void pwm_B_task()
 	return;
 }
 
-
+/*tick*/
 ISR(TIMER0_COMP_vect)
 {
 	g_ticks++;
@@ -215,6 +222,7 @@ ISR(TIMER0_COMP_vect)
 	pwm_B_task();
 }
 
+/*初始化計時器*/
 void init_timer()
 {
 	TCCR0 = 0b00001100;
@@ -222,7 +230,7 @@ void init_timer()
 	TIMSK |= 0x01 << OCIE0;
 }
 
-
+/*主程式*/
 void main(void)
 {
 	
@@ -233,16 +241,14 @@ void main(void)
 	sei();
 	while (1)
 	{
-		//mode++;//?
-		//mode%3;//?
 		runState(0);// 0 1 2 3 ...
 	}
 	
 	return ;
 }
-
-
-
+/*解碼器編寫中*/
+/* ... */
+/*選擇 輸入的state(共16種)*/
 void runState(int state){
 
 	int tick = 0;
@@ -279,10 +285,9 @@ void runState(int state){
 
 		case 15:
 
-		case 16:
-
-
 	}
+	/*注意delay的位置與part計量*/
 	_delay_ms(50)
 	part++;
+
 }

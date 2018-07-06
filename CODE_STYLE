@@ -1,0 +1,189 @@
+7. 命名約定
+最重要的一致性規則是命名管理. 命名的風格能讓我們在不需要去查找類型聲明的條件下快速地了解某個名字代表的含義: 類型, 變量, 函數, 常量, 宏, 等等, 甚至. 我們大腦中的模式匹配引擎非常依賴這些命名規則.
+
+命名規則具有一定隨意性, 但相比按個人喜好命名, 一致性更重要, 所以無論你認為它們是否重要, 規則總歸是規則.
+
+7.1. 通用命名規則
+總述
+
+函數命名, 變量命名, 文件命名要有描述性; 少用縮寫.
+
+說明
+
+盡可能使用描述性的命名, 別心疼空間, 畢竟相比之下讓代碼易於新讀者理解更重要. 不要用只有項目開發者能理解的縮寫, 也不要通過砍掉幾個字母來縮寫單詞.
+
+int price_count_reader; // 無縮寫
+int num_errors; // "num" 是一個常見的寫法
+int num_dns_connections; // 人人都知道 "DNS" 是什麼
+int n; // 毫無意義.
+int nerr; // 含糊不清的縮寫.
+int n_comp_conns; // 含糊不清的縮寫.
+int wgc_connections; // 只有貴團隊知道是什麼意思.
+int pc_reader; // "pc" 有太多可能的解釋了.
+int cstmr_id; // 刪減了若干字母.
+注意, 一些特定的廣為人知的縮寫是允許的, 例如用 i 表示迭代變量和用 T 表示模板參數.
+
+模板參數的命名應當遵循對應的分類: 類型模板參數應當遵循 類型命名 的規則, 而非類型模板應當遵循 變量命名 的規則.
+
+7.2. 文件命名
+總述
+
+文件名要全部小寫, 可以包含下劃線 (_) 或連字符 (-), 依照項目的約定. 如果沒有約定, 那麼 “_” 更好.
+
+說明
+
+可接受的文件命名示例:
+
+my_useful_class.cc
+my-useful-class.cc
+myusefulclass.cc
+myusefulclass_test.cc // _unittest 和 _regtest 已棄用.
+C++ 文件要以 .cc 結尾, 頭文件以 .h 結尾. 專門插入文本的文件則以 .inc 結尾, 參見 頭文件自足.
+
+不要使用已經存在於 /usr/include 下的文件名 , 如 db.h.
+
+通常應盡量讓文件名更加明確. http_server_logs.h 就比 logs.h 要好. 定義類時文件名一般成對出現, 如 foo_bar.h 和 foo_bar.cc, 對應於類 FooBar.
+
+內聯函數必須放在 .h 文件中. 如果內聯函數比較短, 就直接放在 .h 中.
+
+7.3. 類型命名
+總述
+
+類型名稱的每個單詞首字母均大寫, 不包含下劃線: MyExcitingClass, MyExcitingEnum.
+
+說明
+
+所有類型命名 —— 類, 結構體, 類型定義 (typedef), 枚舉, 類型模板參數 —— 均使用相同約定, 即以大寫字母開始, 每個單詞首字母均大寫, 不包含下劃線. 例如:
+
+// 類和結構體
+class UrlTable { ...
+class UrlTableTester { ...
+struct UrlTableProperties { ...
+
+// 類型定義
+typedef hash_map<UrlTableProperties *, string> PropertiesMap;
+
+// using 別名
+using PropertiesMap = hash_map<UrlTableProperties *, string>;
+
+// 枚舉
+enum UrlTableErrors { ...
+7.4. 變量命名
+總述
+
+變量 (包括函數參數) 和數據成員名一律小寫, 單詞之間用下劃線連接. 類的成員變量以下劃線結尾, 但結構體的就不用, 如: a_local_variable, a_struct_data_member, a_class_data_member_.
+
+說明
+
+普通變量命名
+舉例:
+
+string table_name; // 好 - 用下劃線.
+string tablename; // 好 - 全小寫.
+
+string tableName; // 差 - 混合大小寫
+類數據成員
+不管是靜態的還是非靜態的, 類數據成員都可以和普通變量一樣, 但要接下劃線.
+
+class TableInfo {
+  ...
+ private:
+  string table_name_; // 好 - 後加下劃線.
+  string tablename_; // 好.
+  static Pool<TableInfo>* pool_; // 好.
+};
+結構體變量
+不管是靜態的還是非靜態的, 結構體數據成員都可以和普通變量一樣, 不用像類那樣接下劃線:
+
+struct UrlTableProperties {
+  string name;
+  int num_entries;
+  static Pool<UrlTableProperties>* pool;
+};
+結構體與類的使用討論, 參考 結構體 vs. 類.
+
+7.5. 常量命名
+總述
+
+聲明為 constexpr 或 const 的變量, 或在程序運行期間其值始終保持不變的, 命名時以 “k” 開頭, 大小寫混合. 例如:
+
+const int kDaysInAWeek = 7;
+說明
+
+所有具有靜態存儲類型的變量(例如靜態變量或全局變量, 參見存儲類型) 都應當以此方式命名. 對於其他存儲類型的變量, 如自動變量等, 這條規則是可選的. 如果不採用這條規則, 就按照一般的變量命名規則.
+
+7.6. 函數命名
+總述
+
+常規函數使用大小寫混合, 取值和設值函數則要求與變量名匹配: MyExcitingFunction(), MyExcitingMethod(), my_exciting_member_variable(), set_my_exciting_member_variable().
+
+說明
+
+一般來說, 函數名的每個單詞首字母大寫(即“駝峰變量名” 或“帕斯卡變量名”), 沒有下劃線. 對於首字母縮寫的單詞, 更傾向於將它們視作一個單詞進行首字母大寫(例如, 寫作StartRpc() 而非StartRPC()).
+
+AddTableEntry()
+DeleteUrl()
+OpenFileOrDie()
+(同樣的命名規則同時適用於類作用域與命名空間作用域的常量, 因為它們是作為API 的一部分暴露對外的, 因此應當讓它們看起來像是一個函數, 因為在這時, 它們實際上是一個對象而非函數的這一事實對外不過是一個無關緊要的實現細節.)
+
+取值和設值函數的命名與變量一致. 一般來說它們的名稱與實際的成員變量對應, 但並不強制要求. 例如 int count() 與 void set_count(int count).
+
+7.7. 命名空間命名
+總述
+
+命名空間以小寫字母命名. 最高級命名空間的名字取決於項目名稱. 要注意避免嵌套命名空間的名字之間和常見的頂級命名空間的名字之間發生衝突.
+
+頂級命名空間的名稱應當是項目名或者是該命名空間中的代碼所屬的團隊的名字. 命名空間中的代碼, 應當存放於和命名空間的名字匹配的文件夾或其子文件夾中.
+
+注意 不使用縮寫作為名稱 的規則同樣適用於命名空間. 命名空間中的代碼極少需要涉及命名空間的名稱, 因此沒有必要在命名空間中使用縮寫.
+
+要避免嵌套的命名空間與常見的頂級命名空間發生名稱衝突. 由於名稱查找規則的存在, 命名空間之間的衝突完全有可能導致編譯失敗. 尤其是, 不要創建嵌套的std 命名空間. 建議使用更獨特的項目標識符(websearch::index, websearch::index_util) 而非常見的極易發生衝突的名稱(比如websearch::util).
+
+對於internal 命名空間, 要當心加入到同一internal 命名空間的代碼之間發生衝突(由於內部維護人員通常來自同一團隊, 因此常有可能導致衝突). 在這種情況下, 請使用文件名以使得內部名稱獨一無二(例如對於frobber.h, 使用websearch::index::frobber_internal).
+
+7.8. 枚舉命名
+總述
+
+枚舉的命名應當和 常量 或 宏 一致: kEnumName 或是 ENUM_NAME.
+
+說明
+
+單獨的枚舉值應該優先採用 常量 的命名方式. 但 宏 方式的命名也可以接受. 枚舉名 UrlTableErrors (以及 AlternateUrlTableErrors) 是類型, 所以要用大小寫混合的方式.
+
+enum UrlTableErrors {
+    kOK = 0,
+    kErrorOutOfMemory,
+    kErrorMalformedInput,
+};
+enum AlternateUrlTableErrors {
+    OK = 0,
+    OUT_OF_MEMORY = 1,
+    MALFORMED_INPUT = 2,
+};
+由於枚舉值和宏之間的命名衝突, 直接導致了很多問題. 由此, 這裡改為優先選擇常量風格的命名方式. 新代碼應該盡可能優先使用常量風格. 但是老代碼沒必要切換到常量風格, 除非宏風格確實會產生編譯期問題.
+
+7.9. 宏命名
+總述
+
+你並不打算 使用宏, 對吧? 如果你一定要用, 像這樣命名: MY_MACRO_THAT_SCARES_SMALL_CHILDREN.
+
+說明
+
+參考 預處理宏; 通常 不應該 使用宏. 如果不得不用, 其命名像枚舉命名一樣全部大寫, 使用下劃線:
+
+#define ROUND(x) ...
+#define PI_ROUNDED 3.0
+7.10. 命名規則的特例
+總述
+
+如果你命名的實體與已有 C/C++ 實體相似, 可參考現有命名策略.
+
+bigopen(): 函數名, 參照 open() 的形式
+
+uint: typedef
+
+bigpos: struct 或 class, 參照 pos 的形式
+
+sparse_hash_map: STL 型實體; 參照 STL 命名約定
+
+LONGLONG_MAX: 常量, 如同 INT_MAX

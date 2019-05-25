@@ -1,6 +1,6 @@
-高瞻計畫v2.0
+高瞻計畫v3.0
 # ASA tool kit
-THE STATE OF THE ART
+Decentralized synchronous action multiplex architecture control system
 
 
 
